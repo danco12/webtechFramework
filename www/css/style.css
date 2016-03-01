@@ -1,0 +1,40 @@
+h1{
+	text-align: center;
+	color: #089AAD;
+	border-bottom: 1px solid #708F92;
+	margin-bottom: 50px;
+}
+
+#homepage img{
+	width: 100%;
+	height: 200px;
+}
+
+#ulohy img{
+	width: 1100px;
+	height: 300px;
+}
+
+.navbar{
+	border-radius: 0px;
+}
+
+#homepage .overlay{
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.5);
+	color: white;
+	height: 100%;
+	display: none;
+	cursor: pointer;
+}
+#homepage .overlay h3{
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	width: 100%;
+	text-align: center;
+
+}
