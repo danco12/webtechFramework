@@ -1,6 +1,6 @@
 <?php
+	error_reporting(~E_NOTICE);
 
-error_reporting(~E_NOTICE);
 	class Init{
 		/**
 		 * [$basePath cesta k priecinku www]
@@ -15,16 +15,22 @@ error_reporting(~E_NOTICE);
 		public $requested_file;
 
 		/**
-		 * [$file subor, ktory sa realne zobrazi]
+		 * [$class trieda ktora sa ma pouzit]
 		 * @var [string]
+		*/ 
+		public $class;
+		
+		/**
+		 * [$url_request rozparsovana url]
+		 * @var [array]
 		 */
-		public $file;
+		public $url_request;
 
 		/**
-		 * [$path cesta k suboru $file]
+		 * [$template sablona ktora sa ma pouzit]
 		 * @var [string]
-		 */
-		public $path;
+		*/
+		public $template;
 
 		/**
 		 * [$title nadpis stranky, zobrazi sa pri zdielani, alebo v tabe prehliadaca]
@@ -33,21 +39,24 @@ error_reporting(~E_NOTICE);
 		public $title;
 
 		/**
-		 * [$database premenna na uchovanie pristupu k databaze]
-		 * @var [mysqli]
+		 * [$config objekt, ktory obsahuje udaje zo suboru config.neon]
+		 * @var [array]
 		 */
-		public $database;
+		public $config;
 
-
+		/**
+		 * [init inicializacna funkcia danoFrameworku]
+		 * @return [none] [nič]
+		 */
 		public function init(){
-
-			$this->basePath = "http://" . $_SERVER["HTTP_HOST"] . "/zadanie2/www";
+			$this->basePath = "http://" . $_SERVER["HTTP_HOST"];
 			$this->requested_file = isset($_GET["file"]) ? $_GET["file"] : null;
 			
-			self::setPathAndFile();
-			
+			$this->url_request = self::parse_path();
+
 			$this->title = self::getTitle();
-			$this->database = self::initDatabase();
+
+			$this->config = self::parseNeon(__DIR__."/../app/config/config.neon");		
 		}
 
 		/**
@@ -56,11 +65,15 @@ error_reporting(~E_NOTICE);
 		 */
 		public function getTitle(){
 			
-			$titles = self::parseNeon($this->basePath."/../app/config/titles.neon");
-			return isset($titles[$this->file]) ? $titles[$this->file] : null;
+			$titles = self::parseNeon(__DIR__."/../app/config/titles.neon");
+			return isset($titles[$this->class][$this->template]) ? $titles[$this->class][$this->template] : null;
 		}
 
-		function parse_path() {
+		/**
+		 * [parse_path vytvori objekt z url, aby sa s tym dalo jednoduchsie pracovat]
+		 * @return [array] [rozparsovana url]
+		 */
+		public function parse_path() {
 			$path = array();
 			if (isset($_SERVER['REQUEST_URI'])) {
 				$request_path = explode('?', $_SERVER['REQUEST_URI']);
@@ -86,59 +99,29 @@ error_reporting(~E_NOTICE);
 					$path['query_vars'][$t[0]] = $t[1];
 				}
 			}
+			if (isset($path["call_parts"][0]) && $path["call_parts"][0] != "")
+				$this->class = $path["call_parts"][0];
+			else
+				$this->class = "homepage";
+
+			if (isset($path["call_parts"][1]) && $path["call_parts"][1] != "")
+				$this->template = $path["call_parts"][1];
+			else
+				$this->template = "default";
 			return $path;
 		}
 
 		/**
-		 * [setPathAndFile nastavi premennu $file a $path]
-		 */
-		public function setPathAndFile(){
-			if ( $this->requested_file && $this->requested_file != "index" && $this->requested_file != "homepage")
-				if (file_exists('../app/pages/' . $this->requested_file . ".php")){
-					$this->file = $this->requested_file;
-					$this->path = '../app/pages/' . $this->requested_file . ".php";
-				}else{
-					$this->file = "404";
-					$this->path = '../app/pages/404.html';
-				}
-			else{
-				if ($this->requested_file)
-					header('Location: ' . $this->basePath);
-				$this->file = "homepage";
-				$this->path = '../app/pages/homepage.php';
-			}
-		}
-
-		/**
-		 * [parseNeon rozparsuje jednoduchy neon]
+		 * [parseNeon rozparsuje neon]
 		 * @param  [type] $path [adresa suboru (.neon)]
 		 * @return [type]       [pole informacii zo suboru]
 		 */
 		public function parseNeon($path){
 			require_once __DIR__. "/libraries/Decoder.php";
-
 			$neon_decoder = new Decoder();
-
 			$array = $neon_decoder->decode(file_get_contents($path));
 
 			return $array;
-		}
-
-
-		/**
-		 * [initDatabase inicializuje databazu]
-		 * @return [database] [objekt, ktory umoznuje pristup k databaze]
-		 */
-		public function initDatabase(){
-			$db_info = self::parseNeon($this->basePath."/../app/config/config.neon")["databse"];
-
-			$connection = new mysqli($db_info["host"], $db_info["name"], $db_info["password"], $db_info["database_name"]);
-
-			if ($connection->connect_error) {
-				die("Connection failed: " . $conn->connect_error);
-			}else{
-				return $connection;
-			}
 		}
 	}
 

@@ -2,4 +2,4 @@ database:
 	host: 127.0.0.1
 	name: root
 	password: 
-	database_name: zadanie2
+	database_name: zadanie3
