@@ -1,0 +1,54 @@
+h1{
+	text-align: center;
+	color: #089AAD;
+	border-bottom: 1px solid #708F92;
+	margin-bottom: 50px;
+}
+
+.navbar{
+	border-radius: 0px;
+}
+
+.button{
+	color: white;
+	padding: 5px 15px;
+}
+
+.button.blue{
+	background: #089AAD
+}
+
+.button.blue:hover{
+	color:white;
+	text-decoration: none;
+	background: #044B54;
+	cursor: pointer;
+}
+
+.button.green{
+	background: #00F24D
+}
+
+.button.green:hover{
+	color:white;
+	text-decoration: none;
+	background: #009A31;
+	cursor: pointer;
+}
+
+.button.red{
+	background: #CE0C10
+}
+.button.red:hover{
+	color:white;
+	text-decoration: none;
+	background: #750709;
+	cursor: pointer;
+}
+
+/*custom*/
+
+.icon{
+	width: 16px;
+	height: 16px;
+}

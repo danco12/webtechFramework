@@ -1,0 +1,5 @@
+homepage:
+	default: Domovská stránka
+	view: Osoba
+	editUmiestnenie: Editácia umiestnenia
+	editPerson: Editácia osoby

@@ -1,0 +1,8 @@
+homepage:
+	default: Domovská stránka
+sign:
+	in: Prihlásenie
+	up: Registrácia
+	ldap: LDAP Prihlásenie
+dashboard:
+	default: Dashboard
